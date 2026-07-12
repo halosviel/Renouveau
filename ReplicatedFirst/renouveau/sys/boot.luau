@@ -9,8 +9,6 @@
 
 local log = require("./log")
 
-return setmetatable({}, {
-	__call = function(_, folder: Folder)
-		
-	end,
-})
+return function()
+	
+end
