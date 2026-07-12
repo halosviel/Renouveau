@@ -3,3 +3,7 @@ warn("Error\n==> text: Module errored while requiring\n==> context: Module testS
 
 --[[local log = require("@game/ReplicatedFirst/renouveau/sys/log")
 log(2, "this is a test text", "this is a test context")]]
+
+local expect = require("@game/ReplicatedFirst/renouveau/sys/expect")
+expect("string", "true")
+print("passed")

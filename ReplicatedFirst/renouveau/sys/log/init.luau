@@ -6,10 +6,16 @@
 	[DESCRIPTION]
 	The framework's logging module.
 	
-	Logged messages take the form of blocks, with multiple lines
+	Logged messages include:
+	- A title (1st parameter; indexed by code)
+	- Text (2nd parameter)
+	- Context (optional 3rd parameter)
+	- Fields (optional 4th parameter)
+	- Caller info (automatically added footer)
 	
 	[NOTES]
 	- A "field", both in the codes module and here, refers to a row (key value pair) in dictionaries.
+	- Cannot require the Expect module since it uses Log, thus the use of asserts.
 ]=]
 
 -- [CONFIG]
@@ -17,18 +23,13 @@ local SEPARATOR = "==>" --# the beginning string at the start of a new line
 local INFO_LEVEL = 3 --# how deep debug.info will initially search
 -->
 
-type Field = {
-	title: string,
-	content: string
-}
-
 local codes = require("@self/codes")
 
 --# validate codes modules
-for code: number, codeInfo: codes.CodeInfo in codes do
+--[[for code: number, codeInfo: codes.CodeInfo in codes do
 	assert(typeof(codeInfo.title) == "string", `[!] \`title\` for {tostring(code)} was not a number (got {typeof(codeInfo.title)})`)
 	assert(typeof(codeInfo.callback) == "function", `[!] \`callback\` for {tostring(code)} was not a callback (got {typeof(codeInfo.callback)})`)
-end
+end]]
 
 -->
 
@@ -54,7 +55,7 @@ local function getSource() : ( string, string )
 	return scriptName, line
 end
 
-return function(code: number, text: string, context: string?, fields: { Field }?)
+return function(code: number, text: string, context: string?, fields: { { string } }?)
 	--# validate input
 	
 	local codeStr: string = tostring(code)
@@ -82,10 +83,10 @@ return function(code: number, text: string, context: string?, fields: { Field }?
 	local fieldsStr: string? = fields ~= nil and (function()
 		assert(#fields > 0, `[!] Given \`fields\` is an empty table - populate it!`)
 		local strings = {}
-		for _, field: Field in fields do
-			assert(typeof(field.title) == "string", `[!] Given field \`title\` was not a string (got {typeof(field.title)})`)
+		for _, field: { string } in fields do
+			--assert(typeof(field[``]) == "string", `[!] Given field \`title\` was not a string (got {typeof(field[1])})`)
 			--# no need to assert field.content. let's just auto-stringify it :D
-			local str: string = `{SEPARATOR} {field.title}: {tostring(field.content)}`
+			local str: string = `{SEPARATOR} {field[1]}: {tostring(field[2])}`
 			table.insert(strings, str)
 		end
 		return table.concat(strings, "\n")
