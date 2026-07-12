@@ -21,15 +21,8 @@
 -- [CONFIG]
 local SEPARATOR = "==>" --# the beginning string at the start of a new line
 local INFO_LEVEL = 3 --# how deep debug.info will initially search
--->
 
 local codes = require("@self/codes")
-
---# validate codes modules
---[[for code: number, codeInfo: codes.CodeInfo in codes do
-	assert(typeof(codeInfo.title) == "string", `[!] \`title\` for {tostring(code)} was not a number (got {typeof(codeInfo.title)})`)
-	assert(typeof(codeInfo.callback) == "function", `[!] \`callback\` for {tostring(code)} was not a callback (got {typeof(codeInfo.callback)})`)
-end]]
 
 -->
 
