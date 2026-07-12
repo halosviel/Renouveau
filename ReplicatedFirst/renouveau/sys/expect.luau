@@ -13,7 +13,7 @@
 -- [REQUIRES]
 local log = require("./log")
 
-return function(_, types: string, query: any)
+return function(types: string, query: any)
 	assert(typeof(types) == "string", `[!] Given \`target\` was not a string (got {typeof(types)})`)
 	assert(query, `[!] Given \`query\` was not a non-nil value (got {typeof(types)})`)
 	

@@ -54,7 +54,7 @@ local function getSource() : ( string, string )
 	return scriptName, line
 end
 
-return function(_, code: number, text: string, context: string?, fields: { Field }?)
+return function(code: number, text: string, context: string?, fields: { Field }?)
 	--# validate input
 	
 	local codeStr: string = tostring(code)
