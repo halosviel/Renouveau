@@ -101,7 +101,7 @@ return function(code: number, text: string, context: string?, fields: { { string
 	end
 	
 	local scriptName: string, line: string = getSource()
-	message = `{message}\n{SEPARATOR} at line {line} of {scriptName}`
+	message = `{message}\n{SEPARATOR} at: line {line} of {scriptName}`
 	
 	codeInfo.callback(message)
 end

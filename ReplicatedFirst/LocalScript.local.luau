@@ -5,5 +5,5 @@ warn("Error\n==> text: Module errored while requiring\n==> context: Module testS
 log(2, "this is a test text", "this is a test context")]]
 
 local expect = require("@game/ReplicatedFirst/renouveau/sys/expect")
-expect("string", 1)
+expect("string", math.huge, "doing something")
 print("passed")
