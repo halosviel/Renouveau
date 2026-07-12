@@ -13,7 +13,7 @@
 ]=]
 
 -- [CONFIG]
-local SEPARATOR = "==>" -- the beginning string at the start of a new line
+local SEPARATOR = "==>" --# the beginning string at the start of a new line
 local INFO_LEVEL = 3 --# how deep debug.info will initially search
 -->
 
