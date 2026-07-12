@@ -14,6 +14,7 @@
 
 -- [REQUIRES]
 local log = require("./log")
+-->
 
 return function(types: string, query: any, context: string?)
 	assert(typeof(types) == "string", `[!] Given \`target\` was not a string (got {typeof(types)})`)

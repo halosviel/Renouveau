@@ -40,8 +40,7 @@ local function getSource() : ( string, string )
 	local path: string = debug.info(infoLevel, "s")
 	local scriptName: string = path and path:match("[^%.]+$") or "Unknown"
 	
-	--# june 29 update: hardcoded case - if it comes from params module, add 1 to the level
-	--# fixes ambiguous message since params becomes the source
+	--# fixes ambiguous message since expect becomes the source
 	if scriptName == "expect" then
 		infoLevel += 1
 		--# just recalc

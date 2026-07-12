@@ -7,7 +7,10 @@
 	The framework's module loader.
 ]=]
 
+
+-- [REQUIRES]
 local log = require("./log")
+-->
 
 return function()
 	
