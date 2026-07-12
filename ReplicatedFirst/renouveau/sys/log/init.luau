@@ -42,7 +42,7 @@ local function getSource() : ( string, string )
 	
 	--# june 29 update: hardcoded case - if it comes from params module, add 1 to the level
 	--# fixes ambiguous message since params becomes the source
-	if scriptName == "params" then
+	if scriptName == "expect" then
 		infoLevel += 1
 		--# just recalc
 		path = debug.info(infoLevel, "s")

@@ -21,7 +21,7 @@ return function(types: string, query: any)
 	local typesArr: { string } = types:split("|")
 	local matched: boolean = false
 	
-	for _type: string in typesArr do
+	for _, _type: string in typesArr do
 		--# taken from params (Pip)
 		local match: boolean = _type == query
 			or _type == typeof(query)
@@ -36,6 +36,6 @@ return function(types: string, query: any)
 	end
 	
 	if matched == false then
-		log(1, "Type did not match any of the types", _, {{ "types", table.concat(typesArr, ", ")}, { "queryType", typeof(query) }})
+		log(3, "Type did not match any of the types", _, {{ "types", table.concat(typesArr, ", ")}, { "queryType", typeof(query) }})
 	end
 end
