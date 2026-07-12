@@ -1,0 +1,2 @@
+warn("Type Error\n==> text: string expected, got number\n==> context: PlayerId must be a number  \n==> at services/testService on line 08")
+warn("Error\n==> text: Module errored while requiring\n==> context: Module testService's constructor callback threw an error  \n==> at renouveau/boot on line 124")
