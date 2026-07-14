@@ -41,6 +41,6 @@ return function(types: string, query: any, context: string?)
 	end
 	
 	if matched == false then
-		log(1, "Type mismatch", context, {{ "types", table.concat(typesArr, ", ")}, { "queryType", typeof(query) }})
+		log(1, "Type mismatch", context, {{ "expected", table.concat(typesArr, ", ")}, { "got", typeof(query) }})
 	end
 end
