@@ -12,15 +12,17 @@ type self = types.MyModule
 
 return {
 	runsFirst = true,
-	dependencies = { "module1"  },
+	dependencies = {},
 	packages = {},
-	libs = {},
+	libs = { },
 	
 	constructor = function(self: self)
-		
+	end,
+
+	test = function(self: self)
+		warn('wsg gng')
 	end,
 	
 	ready = function(self: self)
-		
 	end,
 }

@@ -1,5 +1,5 @@
-local libs = require("./libs")
-local packages = require("./packages")
+local libs = require("./_libs")
+local packages = require("./_packages")
 
 export type MyModule = {
 	dependencies: {},
