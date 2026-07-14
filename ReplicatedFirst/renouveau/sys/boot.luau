@@ -10,8 +10,6 @@
 	the `services` and `daemons` folders are contained within. As long as those
 	two folders are there, nothing else in the root matters.
 	
-	Instead of using requires,
-	
 	[NOTES]
 	- The module will perform a shallow search of the root folder for modules,
 	meaning that nested modules will not be required.

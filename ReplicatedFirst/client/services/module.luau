@@ -11,17 +11,15 @@ local types = require("../types/services")
 type self = types.MyModule
 
 return {
-	runsFirst = true,
-	dependencies = { "module1" },
+	runsFirst = false,
+	dependencies = {},
 	packages = {},
 	libs = {},
 	
 	constructor = function(self: self)
-		
 	end,
 	
 	ready = function(self: self)
-		print(self)
-		self.dependencies.module1:test()
+		
 	end,
 }
