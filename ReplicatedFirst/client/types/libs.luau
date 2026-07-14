@@ -1,0 +1,10 @@
+export type CuteSignal = typeof(require("@game/ReplicatedFirst/renouveau/libs/cuteSignal"))
+export type Maid = typeof(require("@game/ReplicatedFirst/renouveau/libs/maid"))
+export type Packet = typeof(require("@game/ReplicatedFirst/renouveau/libs/packet"))
+export type ProfileStore = typeof(require("@game/ReplicatedFirst/renouveau/libs/profileStore"))
+export type Promise = typeof(require("@game/ReplicatedFirst/renouveau/libs/promise"))
+export type QuickZone = typeof(require("@game/ReplicatedFirst/renouveau/libs/quickZone"))
+export type RagdollService = typeof(require("@game/ReplicatedFirst/renouveau/libs/ragdollService"))
+export type ShapecastHitbox = typeof(require("@game/ReplicatedFirst/renouveau/libs/shapecastHitbox"))
+export type TableUtils = typeof(require("@game/ReplicatedFirst/renouveau/libs/tableUtils"))
+return {}

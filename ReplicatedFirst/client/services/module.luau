@@ -1,14 +1,30 @@
+--[=[
+	[INFO]
+	author: @halosviel
+	created: 2026 July 14
+	
+	[DESCRIPTION]
+	Module template.
+]=]
+
+local types = require("../types/services")
+
+type self = types.MyModule
+
 return {
 	runsFirst = false,
 	dependencies = {},
 	packages = {},
-	libs = {},
+	libs = { "promise" },
 	
-	constructor = function(self)
+	constructor = function(self: self)
 		self.SOME_SETTING = "here"
 	end,
 	
-	ready = function()
-		
+	ready = function(self: self)
+		self.libs.promise.new(function(resolve:(...any) -> (), reject:(...any) -> ())
+			print("promise resolved!")
+			resolve()
+		end)
 	end,
 }
