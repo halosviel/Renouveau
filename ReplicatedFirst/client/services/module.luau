@@ -8,7 +8,7 @@
 ]=]
 
 local types = require("../types/services")
-type self = types.MyModule
+type self = types.Module
 
 return {
 	runsFirst = false,

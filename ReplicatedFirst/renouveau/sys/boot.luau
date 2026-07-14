@@ -77,7 +77,7 @@ return function(root: Folder)
 	addCollectiveChildren(daemons)
 	
 	if nonModuleScriptInstances > 0 then
-		log(4, `{nonModuleScriptInstances} non-ModuleScript instances found. Did you misplace some instances?`, "ModuleScript caching")
+		log(2, `{nonModuleScriptInstances} non-ModuleScript instances found. Did you misplace some instances?`, "ModuleScript caching")
 	end
 	
 	--## Require & cache modules ##--
@@ -92,12 +92,12 @@ return function(root: Folder)
 		local moduleName: string = moduleScript.Name
 		local moduleType: string = moduleScript.Parent.Name:sub(1, #moduleScript.Parent.Name - 1) --# `service` or `daemon`
 		
-		log(4,
+		log(4, --# warn instead of error bc ts is in a pcall
 			`Module \`{moduleName}\` experienced an error`,
 			context,
 			{
 				{ "err", err },
-				{ "moduleType", moduleType }
+				{ "moduleType", moduleType }s
 			}
 		)
 	end
