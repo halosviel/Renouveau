@@ -8,7 +8,6 @@
 ]=]
 
 local types = require("../types/services")
-
 type self = types.MyModule
 
 return {
@@ -25,6 +24,7 @@ return {
 		self.libs.promise.new(function(resolve:(...any) -> (), reject:(...any) -> ())
 			print("promise resolved!")
 			resolve()
+			workspace.e:Destroy()
 		end)
 	end,
 }
