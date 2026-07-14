@@ -13,5 +13,7 @@ local log = require("./log")
 -->
 
 return function(folder: Folder)
+	expect("Folder", folder)
 	
-end
+	
+end 
