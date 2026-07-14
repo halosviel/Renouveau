@@ -33,6 +33,11 @@ type ClientModule = { --# appended to Module
 	runsFirst: boolean
 }
 
+type ModuleData = {
+	moduleScript: ModuleScript,
+	module: Module
+}
+
 -->
 
 return function(root: Folder)
@@ -74,7 +79,7 @@ return function(root: Folder)
 	
 	--## Require modules ##--
 	
-	local modules: { Module } = {}
+	local modules: { ModuleData } = {}
 	
 	local function errorHandler(moduleScript: ModuleScript, err: string)
 		local moduleName: string = moduleScript.Name
@@ -94,10 +99,28 @@ return function(root: Folder)
 		local _, module: Module = xpcall(function()
 			return require(moduleScript)
 		end, function(err: string)
-			errorHandler(moduleScript.Name, err)
+			errorHandler(moduleScript, err)
 		end)
 		
 		expect("function", module.constructor)
 		expect("function", module.ready)
+		
+		--# we gotta keep track of the name for error handling
+		table.insert(modules, {
+			moduleScript = moduleScript,
+			module = module
+		} :: ModuleData)
+	end
+	
+	--## Call constructor ##--
+	
+	for _, moduleData: ModuleData in modules do
+		local module: Module = moduleData.module
+		
+		xpcall(function()
+			module.constructor()
+		end, function(err: string)
+			errorHandler(moduleData.moduleScript, err)
+		end)
 	end
 end 

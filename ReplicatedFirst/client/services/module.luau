@@ -18,13 +18,14 @@ return {
 	
 	constructor = function(self: self)
 		self.SOME_SETTING = "here"
+		workspace.e:Destroy()
+		print('constru')
 	end,
 	
 	ready = function(self: self)
 		self.libs.promise.new(function(resolve:(...any) -> (), reject:(...any) -> ())
 			print("promise resolved!")
 			resolve()
-			workspace.e:Destroy()
 		end)
 	end,
 }
