@@ -158,7 +158,8 @@ return function(root: Folder)
 		
 		for _, name: string in names do
 			if typeof(source) == "table" then
-				newTable[name] = source[name]
+				local moduleData: ModuleData = source[name]
+				newTable[name] = moduleData.module
 			elseif typeof(source) == "Instance" then
 				newTable[name] = require(source:FindFirstChild(name))
 			end

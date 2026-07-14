@@ -12,7 +12,7 @@ type self = types.MyModule
 
 return {
 	runsFirst = true,
-	dependencies = { "module1"  },
+	dependencies = { "module1" },
 	packages = {},
 	libs = {},
 	
@@ -21,6 +21,7 @@ return {
 	end,
 	
 	ready = function(self: self)
-		
+		print(self)
+		self.dependencies.module1:test()
 	end,
 }
