@@ -15,6 +15,8 @@
 	[NOTES]
 	- The module will perform a shallow search of the root folder for modules,
 	meaning that nested modules will not be required.
+	- Modules that error on require, `constructor`, or `ready` are not skipped! Errors
+	in this stage must be immediately fixed.
 	- The `runsFirst` property works only on the client. Server modules that use
 	this property will be ignored.
 ]=]
@@ -25,6 +27,9 @@ local log = require("./log")
 
 -- [TYPES]
 type Module = {
+	dependencies: { string },
+	packages: { string },
+	libs: { string },
 	constructor: ( self: Module ) -> nil,
 	ready: ( self: Module ) -> nil
 } & any
@@ -77,20 +82,24 @@ return function(root: Folder)
 		log(4, `{nonModuleScriptInstances} non-ModuleScript instances found. Did you misplace some instances?`, "ModuleScript caching")
 	end
 	
-	--## Require modules ##--
+	--## Require & cache modules ##--
+	--# modules will be added to the tables below based on whether
+	--# their `runsFirst` property is true.
 	
+	local priorityModules: { ModuleData } = {}
 	local modules: { ModuleData } = {}
+	local allModules: { ModuleData } = {} --# both tables ^ in one
 	
-	local function errorHandler(moduleScript: ModuleScript, err: string)
+	local function errorHandler(context: string, moduleScript: ModuleScript, err: string)
 		local moduleName: string = moduleScript.Name
-		local moduleType: string = moduleScript.Parent.Name --# `service` or `daemon`
+		local moduleType: string = moduleScript.Parent.Name:sub(1, #moduleScript.Parent.Name - 1) --# `service` or `daemon`
 		
 		log(4,
-			`Module \`{moduleName}\` experienced a runtime error`,
-			"Requiring modules",
+			`Module \`{moduleName}\` experienced an error`,
+			context,
 			{
-				{ "moduleType", moduleType },
-				{ "err", err }
+				{ "err", err },
+				{ "moduleType", moduleType }
 			}
 		)
 	end
@@ -99,28 +108,112 @@ return function(root: Folder)
 		local _, module: Module = xpcall(function()
 			return require(moduleScript)
 		end, function(err: string)
-			errorHandler(moduleScript, err)
+			errorHandler("Requiring modules", moduleScript, err)
 		end)
 		
+		--# validate structure
+		expect("table", module)
+		expect("table", module.dependencies)
+		expect("table", module.packages)
+		expect("table", module.libs)
 		expect("function", module.constructor)
 		expect("function", module.ready)
 		
-		--# we gotta keep track of the name for error handling
-		table.insert(modules, {
+		local moduleData: ModuleData = {
 			moduleScript = moduleScript,
 			module = module
-		} :: ModuleData)
-	end
-	
-	--## Call constructor ##--
-	
-	for _, moduleData: ModuleData in modules do
-		local module: Module = moduleData.module
+		} :: ModuleData
 		
-		xpcall(function()
-			module.constructor()
-		end, function(err: string)
-			errorHandler(moduleData.moduleScript, err)
-		end)
+		if game.RunService:IsClient() then
+			local clientModule: Module & ClientModule = module --# just add client type
+			local targetTable = clientModule.runsFirst == true and priorityModules or modules
+
+			--# we gotta keep track of the name & parent for error handling,
+			--# so just add entire ModuleScript to make it easier.
+			table.insert(targetTable, moduleData)
+		else
+			table.insert(modules, moduleData)
+		end
+		
+		allModules[moduleData.moduleScript.Name] = moduleData
 	end
+	
+	--## Add dependencies ##--
+	--# in this case, referring to all `dependencies`, `packages`,
+	--# and `libs` tables.
+	--#
+	--# This works by replacing each table with a new one, where its
+	--# required module is the value, and the old reference as its key.
+	--#
+	--# Example:
+	--#
+	--# libs = { "maid", "promise" }
+	--# to
+	--#	libs = { maid = Maid, promise = Promise } --# required modules
+	--#
+	--#
+	
+	local function getDependencies(source: { Module } | Instance, names: { string })
+		local newTable: { [string]: any } = {}
+		
+		for _, name: string in names do
+			if typeof(source) == "table" then
+				newTable[name] = source[name]
+			elseif typeof(source) == "Instance" then
+				newTable[name] = require(source:FindFirstChild(name))
+			end
+		end
+		
+		return newTable
+	end
+	
+	for _, moduleData: ModuleData in allModules do
+		if #moduleData.module.dependencies > 0 then
+			moduleData.module.dependencies = getDependencies(allModules, moduleData.module.dependencies)
+		end
+		
+		if #moduleData.module.packages > 0 then
+			moduleData.module.packages = getDependencies(script.Parent.Parent.packages, moduleData.module.packages)
+		end
+		
+		if #moduleData.module.libs > 0 then
+			moduleData.module.libs = getDependencies(script.Parent.Parent.libs, moduleData.module.libs)
+		end
+	end
+	
+	--## Call modules ##--
+	
+	local function init(_modules: { ModuleData })
+		--## Call constructor ##--
+		
+		for _, moduleData: ModuleData in _modules do
+			xpcall(function()
+				moduleData.module:constructor()
+			end, function(err: string)
+				errorHandler("Running `constructor()`", moduleData.moduleScript, err)
+			end)
+		end
+		
+		--## Call ready ##--
+		
+		for _, moduleData: ModuleData in _modules do
+			xpcall(function()
+				moduleData.module:ready()
+			end, function(err: string)
+				errorHandler("Running `ready()`", moduleData.moduleScript, err)
+			end)
+		end
+	end
+	
+	--# priority modules
+	if game.RunService:IsClient() then
+		init(priorityModules)
+	end
+	
+	--# non-priority modules
+	if not game:IsLoaded() then
+		game.Loaded:Wait()
+	end
+	
+	init(modules)
 end 

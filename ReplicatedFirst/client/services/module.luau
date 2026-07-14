@@ -11,15 +11,14 @@ local types = require("../types/services")
 type self = types.MyModule
 
 return {
-	runsFirst = false,
+	runsFirst = true,
 	dependencies = {},
 	packages = {},
 	libs = { "promise" },
 	
 	constructor = function(self: self)
+		print(self)
 		self.SOME_SETTING = "here"
-		workspace.e:Destroy()
-		print('constru')
 	end,
 	
 	ready = function(self: self)
