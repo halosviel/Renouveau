@@ -18,7 +18,6 @@ local log = require("./log")
 
 return function(types: string, query: any, context: string?)
 	assert(typeof(types) == "string", `[!] Given \`target\` was not a string (got {typeof(types)})`)
-	assert(query ~= nil, `[!] Given \`query\` was not a non-nil value (got {typeof(query)})`)
 	
 	if context ~= nil then
 		assert(typeof(context) == "string", `[!] Given \`context\` was not a string (got {typeof(context)})`)
