@@ -201,16 +201,16 @@ return function(root: Folder)
 				errorHandler("Running `ready()`", moduleData.moduleScript, err)
 			end)
 		end
+		
 	end
 	
-	--# priority modules
 	if game.RunService:IsClient() then
 		init(priorityModules)
-	end
-	
-	--# non-priority modules
-	if not game:IsLoaded() then
-		game.Loaded:Wait()
+		
+		--# non-priority modules
+		if not game:IsLoaded() then
+			game.Loaded:Wait()
+		end
 	end
 	
 	init(modules)
