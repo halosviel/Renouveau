@@ -206,7 +206,7 @@ return function(root: Folder)
 	--## Call modules ##--
 	
 	local function init(_modules: { ModuleData })
-		--## Call constructor ##--
+		--## Call constructor/new ##--
 		
 		for _, moduleData: ModuleData in _modules do
 			if table.find(moduleData.moduleScript:GetTags(), "DontRun") then

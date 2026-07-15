@@ -17,6 +17,7 @@ return {
 	libs = {},
 	
 	constructor = function(self: self)
+		
 	end,
 	
 	ready = function(self: self)
