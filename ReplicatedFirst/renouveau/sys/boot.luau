@@ -65,11 +65,16 @@ return function(root: Folder)
 	
 	local function addCollectiveChildren(folder: Folder)
 		for _, moduleScript: ModuleScript in folder:GetChildren() do
+			if moduleScript:IsA("Folder") then
+				continue
+			end
+			
 			if not moduleScript:IsA("ModuleScript") then
 				nonModuleScriptInstances += 1
 				continue
+			else
+				table.insert(moduleScripts, moduleScript)
 			end
-			table.insert(moduleScripts, moduleScript)
 		end
 	end
 	
