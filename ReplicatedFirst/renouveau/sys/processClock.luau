@@ -24,6 +24,7 @@
 ]=]
 
 local class = require("./class")
+local expect = require("./expect")
 
 type self = {
 	MILESTONES: { number },
@@ -31,6 +32,7 @@ type self = {
 	callback: () -> nil,
 	startTimestamp: number,
 	thread: thread,
+	destroyed: boolean,
 	new: ( self: self ) -> nil,
 	Destroy: ( self: self ) -> nil,
 	ready: ( self: self ) -> nil
@@ -39,6 +41,9 @@ export type ProcessClock = self
 
 return class {
 	new = function(self: self, name: string, callback: () -> nil)
+		expect("string", name)
+		expect("function", callback)
+		
 		self.MILESTONES = { 2, 5, 10, 15, 30, 60, 120, 300, 600, 1000 }
 		
 		self.name = name
@@ -46,6 +51,7 @@ return class {
 		
 		self.startTimestamp = os.clock()
 		self.thread = nil
+		self.destroyed = false
 	end,
 	
 	Destroy = function(self: self)
@@ -58,6 +64,10 @@ return class {
 			
 			while true do
 				task.wait(1)
+				
+				if self.destroyed == true then
+					return
+				end
 				
 				if math.floor(os.clock() - self.startTimestamp) == self.MILESTONES[index] then
 					--print(`milestone reached | index: {index} | milestone: {self.MILESTONES[index]}s`)
