@@ -10,13 +10,20 @@
 	the `services` and `daemons` folders are contained within. As long as those
 	two folders are there, nothing else in the root matters.
 	
+	[TAGS]
+	Tags you can assign to modules for customised boot behaviour:
+	- Ignore: The module will not be required at all -> good for storage/util modules.
+	- DontRun: The module will be required and have its dependencies injected, but
+	  `constructor()` and `ready()` will not be called on it -> good for classes.
+	
 	[NOTES]
-	- The module will perform a shallow search of the root folder for modules,
-	meaning that nested modules will not be required.
-	- Modules that error on require, `constructor`, or `ready` are not skipped! Errors
-	in this stage must be immediately fixed.
-	- The `runsFirst` property works only on the client. Server modules that use
-	this property will be ignored.
+	- The module will perform a deep search of the root folder for modules,
+	  meaning that nested modules will be required. Use the `Ignore` tag if you do NOT
+	  want a module required.
+	- Modules with runtime errors on require, `constructor`, or `ready` are not skipped/handled!
+	  Errors in these stages must be immediately fixed.
+	- The `runsFirst` property only works on the client. Server modules that use this
+	  property will incur no effect.
 ]=]
 
 -- [REQUIRES]
@@ -64,8 +71,13 @@ return function(root: Folder)
 	local nonModuleScriptInstances: number = 0
 	
 	local function addCollectiveChildren(folder: Folder)
-		for _, moduleScript: ModuleScript in folder:GetChildren() do
+		for _, moduleScript: ModuleScript in folder:GetDescendants() do
 			if moduleScript:IsA("Folder") then
+				continue
+			end
+			
+			if table.find(moduleScript:GetTags(), "BootIgnore") then
+				print("ignoring", moduleScript.Name)
 				continue
 			end
 			
