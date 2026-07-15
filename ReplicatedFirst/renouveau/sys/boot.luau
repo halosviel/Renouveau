@@ -24,6 +24,7 @@
 	  Errors in these stages must be immediately fixed.
 	- The `runsFirst` property only works on the client. Server modules that use this
 	  property will incur no effect.
+	- No two module names can be the same!
 ]=]
 
 -- [REQUIRES]
