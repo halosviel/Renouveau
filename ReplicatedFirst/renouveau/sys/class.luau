@@ -37,7 +37,7 @@ return function(class) --# keep return type generic !!
 	class.__index = class
 	local originalNewFuntion = class.new
 	
-	class.new = function(_, ...)
+	class.new = function(...)
 		local self = setmetatable({}, class)
 		originalNewFuntion(self, ...)
 		
