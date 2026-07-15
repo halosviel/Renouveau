@@ -131,7 +131,14 @@ return function(root: Folder)
 		expect("table", module.dependencies)
 		expect("table", module.packages)
 		expect("table", module.libs)
-		expect("function", module.constructor)
+		
+		--# classes have new instead of constructor. Accept one or the other.
+		if module.new == nil then
+			expect("function", module.constructor)
+		else
+			expect("function", module.new)
+		end
+		
 		expect("function", module.ready)
 		
 		local moduleData: ModuleData = {
