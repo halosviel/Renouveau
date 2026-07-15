@@ -78,7 +78,6 @@ return function(root: Folder)
 			end
 			
 			if table.find(moduleScript:GetTags(), "BootIgnore") then
-				print("ignoring", moduleScript.Name)
 				continue
 			end
 			
@@ -203,6 +202,10 @@ return function(root: Folder)
 		--## Call constructor ##--
 		
 		for _, moduleData: ModuleData in _modules do
+			if table.find(moduleData.moduleScript:GetTags(), "DontRun") then
+				continue
+			end
+			
 			xpcall(function()
 				moduleData.module:constructor()
 			end, function(err: string)
@@ -213,6 +216,10 @@ return function(root: Folder)
 		--## Call ready ##--
 		
 		for _, moduleData: ModuleData in _modules do
+			if table.find(moduleData.moduleScript:GetTags(), "DontRun") then
+				continue
+			end
+			
 			xpcall(function()
 				moduleData.module:ready()
 			end, function(err: string)
