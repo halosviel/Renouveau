@@ -18,13 +18,10 @@
 	- Cannot require the Expect module since it uses Log, thus the use of asserts.
 ]=]
 
--- [CONFIG]
 local SEPARATOR = "==>" --# the beginning string at the start of a new line
 local INFO_LEVEL = 3 --# how deep debug.info will initially search
 
 local codes = require("@self/codes")
-
--->
 
 --# taken from Pip :P
 local function getSource() : ( string, string )

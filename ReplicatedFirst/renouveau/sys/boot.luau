@@ -27,11 +27,9 @@
 	- No two module names can be the same!
 ]=]
 
--- [REQUIRES]
 local expect = require("./expect")
 local log = require("./log")
 
--- [TYPES]
 type Module = {
 	dependencies: { string },
 	packages: { string },
@@ -48,8 +46,6 @@ type ModuleData = {
 	moduleScript: ModuleScript,
 	module: Module
 }
-
--->
 
 return function(root: Folder)
 	--## Validate ##--
@@ -206,7 +202,7 @@ return function(root: Folder)
 	--## Call modules ##--
 	
 	local function init(_modules: { ModuleData })
-		--## Call constructor/new ##--
+		--## Call constructor ##--
 		
 		for _, moduleData: ModuleData in _modules do
 			if table.find(moduleData.moduleScript:GetTags(), "DontRun") then
