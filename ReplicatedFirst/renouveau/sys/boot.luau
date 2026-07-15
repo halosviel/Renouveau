@@ -97,7 +97,7 @@ return function(root: Folder)
 			context,
 			{
 				{ "err", err },
-				{ "moduleType", moduleType }s
+				{ "moduleType", moduleType }
 			}
 		)
 	end
@@ -148,7 +148,6 @@ return function(root: Folder)
 	--# libs = { "maid", "promise" }
 	--# to
 	--#	libs = { maid = Maid, promise = Promise } --# required modules
-	--#
 	--#
 	
 	local function getDependencies(source: { Module } | Instance, names: { string })
