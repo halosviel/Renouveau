@@ -21,6 +21,9 @@
 	[NOTES]
 	- The second parameter is the on-finish/Destroy callback.
 	- The class can be destroyed mid-execution :D
+	- The callback is not pcalled. It assumes that the caller is just
+	  setting the object to nil (what more are you to do when a
+	  timer finishes anyway?).
 ]=]
 
 local class = require("./class")
@@ -55,6 +58,11 @@ return class {
 	end,
 	
 	Destroy = function(self: self)
+		if self.destroyed == true then
+			return
+		end
+		self.destroyed = true
+		
 		self.callback()
 	end,
 	
@@ -69,6 +77,7 @@ return class {
 					return
 				end
 				
+				--# clanker warns of drift, but i doubt it
 				if math.floor(os.clock() - self.startTimestamp) == self.MILESTONES[index] then
 					--print(`milestone reached | index: {index} | milestone: {self.MILESTONES[index]}s`)
 					index += 1
