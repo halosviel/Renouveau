@@ -49,7 +49,7 @@ return class {
 		expect("string", name)
 		expect("function", callback)
 		
-		self.MILESTONES = { 5, 10, 15, 30, 60, 120, 300, 600, 1000 }
+		self.MILESTONES = { 5, 15, 30, 60, 120, 300, 600, 1000 }
 		
 		self.name = name
 		self.callback = callback
