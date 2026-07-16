@@ -29,6 +29,7 @@
 
 local expect = require("./expect")
 local log = require("./log")
+local processClock = require("./processClock")
 
 type Module = {
 	dependencies: { string },
@@ -61,6 +62,13 @@ return function(root: Folder)
 	if not daemons then
 		log(2, "Missing `daemons` folder in root", _, {{ "root", root:GetFullName() }})
 	end
+	
+	--## Start process clock ##--
+	
+	local clock: processClock.ProcessClock
+	clock = processClock.new("Boot", function()
+		clock = nil
+	end)
 	
 	--## Get collective module scripts ##--
 	
@@ -242,4 +250,5 @@ return function(root: Folder)
 	end
 	
 	init(modules)
+	clock:Destroy()
 end 
