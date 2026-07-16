@@ -28,6 +28,7 @@
 
 local class = require("./class")
 local expect = require("./expect")
+local signal = require("@game/ReplicatedFirst/renouveau/libs/cuteSignal")
 
 type self = {
 	MILESTONES: { number },
@@ -36,6 +37,7 @@ type self = {
 	startTimestamp: number,
 	thread: thread,
 	destroyed: boolean,
+	onUpdate: signal.Signal,
 	new: ( self: self ) -> nil,
 	Destroy: ( self: self ) -> nil,
 	ready: ( self: self ) -> nil
@@ -55,6 +57,7 @@ return class {
 		self.startTimestamp = os.clock()
 		self.thread = nil
 		self.destroyed = false
+		self.onUpdate = signal.new()
 	end,
 	
 	Destroy = function(self: self)
@@ -62,6 +65,11 @@ return class {
 			return
 		end
 		self.destroyed = true
+		
+		if self.onUpdate then
+			self.onUpdate:Destroy()
+			self.onUpdate = nil
+		end
 		
 		self.callback()
 	end,
@@ -77,8 +85,11 @@ return class {
 					return
 				end
 				
+				local elapsed: number = math.floor(os.clock() - self.startTimestamp)
+				self.onUpdate:Fire(elapsed)
+				
 				--# clanker warns of drift, but i doubt it
-				if math.floor(os.clock() - self.startTimestamp) == self.MILESTONES[index] then
+				if elapsed == self.MILESTONES[index] then
 					--print(`milestone reached | index: {index} | milestone: {self.MILESTONES[index]}s`)
 					index += 1
 					
