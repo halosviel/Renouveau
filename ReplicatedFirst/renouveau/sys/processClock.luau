@@ -90,11 +90,11 @@ return class {
 				
 				--# clanker warns of drift, but i doubt it
 				if elapsed == self.MILESTONES[index] then
-					--print(`milestone reached | index: {index} | milestone: {self.MILESTONES[index]}s`)
+					warn(`Process {self.name} taking longer than usual ({self.MILESTONES[index]}s)`)
 					index += 1
 					
 					if self.MILESTONES[index] == nil then
-						--print(`processClock {self.name} finished`)
+						warn(`Process {self.name} timed out ({self.MILESTONES[index - 1] or "?"}s)`)
 						self:Destroy()
 						return
 					end
