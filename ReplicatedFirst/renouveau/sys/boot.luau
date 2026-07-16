@@ -70,6 +70,8 @@ return function(root: Folder)
 		clock = nil
 	end)
 	
+	local startTimestamp: number = os.clock()
+	
 	--## Get collective module scripts ##--
 	
 	local moduleScripts: { ModuleScript } = {}
@@ -251,4 +253,6 @@ return function(root: Folder)
 	
 	init(modules)
 	clock:Destroy()
-end 
+	
+	print(`Booted {#priorityModules + #modules} modules in {math.floor((os.clock() - startTimestamp) * 100) / 100}s`)
+end
