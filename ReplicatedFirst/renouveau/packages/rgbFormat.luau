@@ -9,17 +9,11 @@
 	[EXAMPLE]
 	local myColor = toRGB(Color3.fromRGB(255, 255, 255))
 	textLabel.Text = `<font color="{myColor}">Hello world!</font>`
-	
-	[NOTES]
-	- clanker code
 ]=]
 
--- [REQUIRES]
-local params = require("@game/ReplicatedFirst/pip/params")
-
--->
+local expect = require("@game/ReplicatedFirst/renouveau/sys/expect")
 
 return function(color3: Color3) : string
-	params.expect("Color3", color3)
+	expect("Color3", color3)
 	return `rgb({math.floor(color3.R * 255)}, {math.floor(color3.G * 255)}, {math.floor(color3.B * 255)})`
 end

@@ -5,10 +5,12 @@
 	
 	[DESCRIPTION]
 	A module with helpful tween utils.
+	Mainly used for getting the same TweenInfo, but with a different time value.
 	
 	[EXAMPLES]
-	(1) tweenService:Create(someTextLabel, tweenUtils.getPreset(1), { TextColor = Color3.fromRGB(255, 255, 255) }):Play()'
-	(2)
+	(1) tweenUtils.getPreset(0.5)
+	(2) tweenService:Create(someTextLabel, tweenUtils.getPreset(1), { TextColor = Color3.fromRGB(255, 255, 255) }):Play()'
+	(3)
 	tweenUtils.tweenNumberSequence({
 		script.Parent.UIGradient,
 		"Transparency",
@@ -25,8 +27,8 @@
 ]=]
 
 -- [REQUIRES]
-local console = require("@game/ReplicatedFirst/pip/console")
-local params = require("@game/ReplicatedFirst/pip/params")
+local expect = require("@game/ReplicatedFirst/renouveau/sys/expect")
+local log = require("@game/ReplicatedFirst/renouveau/sys/log")
 
 -- [TYPES]
 type NumberSequenceData = {
@@ -49,7 +51,7 @@ return {
 		Uses lazy loading for micro optimisation.
 	]]
 	getPreset = function(duration: number) : TweenInfo
-		params.expect("number", duration)
+		expect("number", duration)
 		
 		local index: TweenInfo? = presetsCache[duration]
 		if index then
@@ -70,10 +72,10 @@ return {
 		end)
 	]]
 	tweenNumber = function(startValue: number, endValue: number, tweenInfo: TweenInfo, callback: (( value: number ) -> nil)?) : NumberValue
-		params.expect("number", startValue)
-		params.expect("number", endValue)
-		params.expect("TweenInfo", tweenInfo)
-		params.expect("function", callback)
+		expect("number", startValue)
+		expect("number", endValue)
+		expect("TweenInfo", tweenInfo)
+		expect("function", callback)
 		
 		local newNumberValue: NumberValue = Instance.new("NumberValue")
 		newNumberValue.Value = startValue
@@ -109,22 +111,26 @@ return {
 		
 		--# validations
 		
-		params.expect("Instance", instance)
-		params.expect("string", property)
+		expect("Instance", instance)
+		expect("string", property)
 		
 		if instance[property] == nil then
-			console.warn(`Request to tween numseq dropped: {property} is not a valid property of {instance.ClassName}`)
+			log(1, "Cannot tween an invalid property", "in `tweenNumberSequence()`", {{ "property", property }})
 			return
 		end
 		
-		params.expect("TweenInfo", tweenInfo)
-		params.expect("NumberSequence", from)
-		params.expect("NumberSequence", to)
+		expect("TweenInfo", tweenInfo)
+		expect("NumberSequence", from)
+		expect("NumberSequence", to)
 		
-		local fromKeypoints = #from.Keypoints
-		local toKeypoints = #to.Keypoints
+		local fromKeypoints: number = #from.Keypoints
+		local toKeypoints: number = #to.Keypoints
 		if fromKeypoints ~= toKeypoints then
-			console.warn(`Request to tween numseq dropped: Keypoint amount mismatch | Got {#fromKeypoints} & {toKeypoints}`)
+			log(1, "Keypoint amount mismatch", "in `tweenNumberSequence()`", {
+				{ "property", property },
+				{ "fromKeyPoints", tostring(fromKeypoints) },
+				{ "toKeypoints", tostring(toKeypoints)}
+			})
 			return
 		end
 		

@@ -23,11 +23,10 @@
 ]=]
 
 -- [REQUIRES]
-local console = require("@game/ReplicatedFirst/pip/console")
-local params = require("@game/ReplicatedFirst/pip/params")
-local try =  require("@game/ReplicatedFirst/pip/try")
+local expect = require("@game/ReplicatedFirst/renouveau/sys/expect")
+local log = require("@game/ReplicatedFirst/renouveau/sys/log")
 
-local maid = require("@game/ReplicatedFirst/shared/libs/maid")
+local maid = require("@game/ReplicatedFirst/renouveau/libs/maid")
 
 -- [TYPES]
 type self = {
@@ -97,22 +96,18 @@ end
 
 local cacheTotalDuration = os.clock() - cacheStartTimestamp
 local conflictSuffix: string = #conflicts == 1 and "" or "s"
---console.log(`Cached {soundCount} sounds in {cacheTotalDuration}s ({#conflicts} conflict{conflictSuffix})`)
+--print(`Cached {soundCount} sounds in {cacheTotalDuration}s ({#conflicts} conflict{conflictSuffix})`)
 
 if #conflicts > 0 then
-	console.log(`Cache conflicts: {table.concat(conflicts, ", ")}`)
+	log(2, `{tostring(#conflicts)} naming conflict{conflictSuffix} found`, "Caching sounds" ,`conflicts: {table.concat(conflicts, ", ")}`)
 end
 
 task.spawn(function()
-	try {
-		function()
-			local preloadingStartTimestamp = os.clock()
-			game.ContentProvider:PreloadAsync(sounds)
-		end,
-		function(err: string)
-			console.warn(`Preloading failed: {err}`)
-		end,
-	}
+	xpcall(function()
+		game:GetService("ContentProvider"):PreloadAsync(sounds)
+	end, function(err: string)
+		log(4, "Sound preloading failed", "Post-cache sound preloading", {{ "err", err }})
+	end)
 end)
 
 -->
@@ -125,11 +120,11 @@ local SoundUtils = {} :: self
 	Get a sound in SoundService.
 ]]
 function SoundUtils.getSound(soundName: string) : Sound
-	params.expect("string", soundName)
+	expect("string", soundName)
 	
 	local index: Sound? = soundCache[soundName]
 	if not index then
-		console.error(`Sound "{soundName}" not found in cache`)
+		log(3, "Sound does not exist. Typo or setup error expected", "Called `.getSound()`", {{ "sound", soundName }})
 		return
 	end
 	
@@ -153,7 +148,7 @@ end
 	If a Sound instance is passed, it will use it directly.
 ]]
 function SoundUtils.wrap(query: string | Instance) : self
-	params.expectAny({"string", "Sound"}, query)
+	expect("string|Sound", query)
 	
 	local self = setmetatable({
 		instance = typeof(query) == "Instance" and query or SoundUtils.getSound(query),
@@ -178,7 +173,7 @@ end
 	Calls the callback, passing self.instance as a parameter.
 ]]
 function SoundUtils:get(callback: ( sound: Sound ) -> nil) : self
-	params.expect("function", callback)
+	expect("function", callback)
 	callback(self.instance)
 	return self
 end
@@ -192,13 +187,13 @@ function SoundUtils:clone() : self
 end
 
 function SoundUtils:setParent(parent: BasePart) : self
-	params.expect("Instance", parent)
+	expect("Instance", parent)
 	self.instance.Parent = parent
 	return self
 end
 
 function SoundUtils:setVolume(volume: number) : self
-	params.expect("number", volume)
+	expect("number", volume)
 	self.instance.Volume = volume
 	return self
 end
@@ -208,7 +203,7 @@ end
 	is destroyed.
 ]]
 function SoundUtils:onDestroy(callback: () -> nil) : self
-	params.expect("function", callback)
+	expect("function", callback)
 	table.insert(self.onDestroyCallbacks, callback)
 	return self
 end
@@ -228,7 +223,7 @@ end
 	Assigns a random PlaybackSpeed from the range constructed from the value given.
 ]]
 function SoundUtils:setRandomPitch(value: number) : self
-	params.expect("number", value)
+	expect("number", value)
 	self.instance.PlaybackSpeed += math.random(-value * 100, value * 100) / 100
 	return self
 end
@@ -237,8 +232,8 @@ end
 	Assigns a random PlaybackSpeed from the range constructed from the range given.
 ]]
 function SoundUtils:setRandomPitchRange(min: number, max: number) : self
-	params.expect("number", min)
-	params.expect("number", max)
+	expect("number", min)
+	expect("number", max)
 	self.instance.PlaybackSpeed += math.random(-min * 100, max * 100) / 100
 	return self
 end
@@ -247,7 +242,7 @@ end
 	Adds the sound to the Debris service with the lifetime being the value given.
 ]]
 function SoundUtils:setLifetime(value: number) : self
-	params.expect("number", value)
+	expect("number", value)
 	game.Debris:AddItem(self.instance, value)
 	return self
 end

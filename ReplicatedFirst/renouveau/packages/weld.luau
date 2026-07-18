@@ -7,14 +7,11 @@
 	Welds all BasePart descendants of instance to parent but not instance itself.
 ]=]
 
--- [REQUIRES]
-local params = require("@game/ReplicatedFirst/pip/params")
-
--->
+local expect = require("@game/ReplicatedFirst/pip/expect")
 
 return function(instance: Instance, parent: BasePart)
-	params.expect("Instance", instance)
-	params.expect("BasePart", parent)
+	expect("Instance", instance)
+	expect("BasePart", parent)
 	
 	for _, obj: Instance in instance:GetDescendants() do
 		if not obj:IsA("BasePart") then

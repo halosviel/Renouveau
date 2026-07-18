@@ -18,10 +18,8 @@
 	  properly manage all requests.
 ]=]
 
--- [REQUIRES]
-local params = require("@game/ReplicatedFirst/pip/params")
+local expect = require("@game/ReplicatedFirst/renouveau/sys/expect")
 
--- [TYPES]
 type self = {
 	setResetEnabled: ( self: self, enabled: boolean ) -> nil,
 	setLeaderboardEnabled: ( self: self, enabled: boolean ) -> nil,
@@ -30,13 +28,11 @@ type self = {
 }
 export type CoreGui = self
 
--->
-
 return {
 	--# since this runs asynchronously, race conditions can happen if multiple calls happen simultaneously.
 	--# updated logic 2026 May 14
 	setResetEnabled = function(self: self, enabled: boolean)
-		params.expect("boolean", enabled)
+		expect("boolean", enabled)
 		task.spawn(function()
 			repeat task.wait() until pcall(function()
 				game.StarterGui:SetCore("ResetButtonCallback", false)
@@ -45,17 +41,17 @@ return {
 	end,
 	
 	setLeaderboardEnabled = function(self: self, enabled: boolean)
-		params.expect("boolean", enabled)
+		expect("boolean", enabled)
 		game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, enabled)
 	end,
 	
 	setChatEnabled = function(self: self, enabled: boolean)
-		params.expect("boolean", enabled)
+		expect("boolean", enabled)
 		game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, enabled)
 	end,
 	
 	setAllEnabled = function(self: self, enabled: boolean)
-		params.expect("boolean", enabled)
+		expect("boolean", enabled)
 		
 		self:setResetEnabled(enabled)
 		self:setLeaderboardEnabled(enabled)

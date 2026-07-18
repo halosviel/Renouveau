@@ -40,9 +40,8 @@
 ]=]
 
 -- [REQUIRES]
-local console = require("@game/ReplicatedFirst/pip/console")
-local params = require("@game/ReplicatedFirst/pip/params")
-local try = require("@game/ReplicatedFirst/pip/try")
+local expect = require("@game/ReplicatedFirst/renouveau/sys/expect")
+local log = require("@game/ReplicatedFirst/renouveau/sys/log")
 
 -- [TYPES]
 type QueuedState = {
@@ -110,14 +109,11 @@ local function start()
 			local currentState: State = stateMachine.states[currentStateName]
 			
 			if currentState and currentState.exit then
-				try {
-					function()
-						currentState:exit()
-					end,
-					function(err: string)
-						console.warn(`"{currentStateName}" exit state failed`, `Err: {err}`, `State machine: {stateMachine.name}`)
-					end,
-				}
+				xpcall(function()
+					currentState:exit()
+				end, function(err: string)
+					log(4, "Error on `exit()`", "Exiting state", {{ "err", err }, { "stateMachine", stateMachine.name }})
+				end)
 			end
 			
 			--# enter new state
@@ -127,21 +123,17 @@ local function start()
 			
 			--# update state
 			stateMachine.state = queuedState.stateName
-
+			
 			local nextStateName: string = queuedState.stateName or "??"
 			local nextState: State = stateMachine.states[nextStateName]
-			
-			try {
-				function()
-					nextState:enter(table.unpack(queuedState.args))
-				end,
-				function(err: string)
-					console.warn(`"{nextStateName}" enter state failed`, `Err: {err}`, `State machine: {stateMachine.name}`)
-				end,
-			}
+			xpcall(function()
+				nextState:enter(table.unpack(queuedState.args))
+			end, function(err: string)
+				log(4, "Error on `enter()`", "Exiting state", {{ "err", err }, { "stateMachine", stateMachine.name }})
+			end)
 			
 			--# log
-			--console.log(`Updated state machine "{stateMachine.name}" | {currentStateName} -> {nextStateName}`)
+			--print(`Updated state machine "{stateMachine.name}" | {currentStateName} -> {nextStateName}`)
 		end
 	end)
 end
@@ -157,24 +149,24 @@ end
 local StateMachine = {}
 
 function StateMachine.new(name: string, states: { name: string, [string]: State? }) : self
-	params.expect("string", name)
-	params.expect("table", states)
+	expect("string", name)
+	expect("table", states)
 	
 	local stateNames: { string } = {}
 	local noStates = true --# flag to replace #states since its a dict
 	
 	for stateName: string?, state: State? in states do
-		params.expect("string", stateName) --# all keys should be a string (state name)
-		params.expect("table", state) --# all states should be a dictionary
+		expect("string", stateName) --# all keys should be a string (state name)
+		expect("table", state) --# all states should be a dictionary
 		
 		local enterCallback: ((...any) -> nil)? = state.enter
 		if not enterCallback then
-			console.deverr("Cannot have a state without an enter callback", `State machine: {name}`)
+			log(1, "Cannot have a state without an enter callback", "Processing state machine", {{ "stateMachine", name}})
 		end
 		
 		local exitCallback: (() -> nil)? = state.exit
 		if exitCallback then
-			params.expect("function", exitCallback) --# exit should be a function
+			expect("function", exitCallback) --# exit should be a function
 		end
 		
 		table.insert(stateNames, stateName)
@@ -182,7 +174,7 @@ function StateMachine.new(name: string, states: { name: string, [string]: State?
 	end
 	
 	if noStates then
-		console.deverr("Cannot have a state machine with no states", `State machine: {name}`)
+		log(1, "Cannot have a state machine with no states", "Processing state machine", {{ "stateMachine", name}})
 	end
 	
 	local self = setmetatable({
@@ -194,13 +186,13 @@ function StateMachine.new(name: string, states: { name: string, [string]: State?
 	}, StateMachine :: StateMachine)
 	
 	table.insert(stateMachines, self)
-	--console.log(`Created stateMachine {name}`, States: {table.concat(stateNames, ", ")})
+	--print(`Created stateMachine {name}`, States: {table.concat(stateNames, ", ")})
 	
 	return self
 end
 
 function StateMachine:setState(stateName: string, ...: any)
-	params.expect("string", stateName)
+	expect("string", stateName)
 	
 	local isValidState: boolean = false
 	for key: string, _ in self.states do
@@ -211,7 +203,7 @@ function StateMachine:setState(stateName: string, ...: any)
 	end
 	
 	if isValidState == false then
-		console.deverr(`"{stateName}" is not a valid state`, `State machine: {self.name}`)
+		log(1, "State does not exist", "Changing states", {{ "state", stateName }, { "stateMachine", self.name }})
 		return
 	end
 	
@@ -242,14 +234,11 @@ function StateMachine:Destroy()
 	if self.state then
 		local currentState = self.states[self.state]
 		if currentState and currentState.exit then
-			try {
-				function()
-					currentState:exit()
-				end,
-				function(err)
-					console.warn(`"{self.state}" exit failed during Destroy`, err)
-				end,
-			}
+			xpcall(function()
+				currentState:exit()
+			end, function(err: string)
+				log(4, "Unable to execute final `exit() call", "Destroying state machine", {{ "err", err }, { "stateMachine", self.name or "?"}})
+			end)
 		end
 	end
 	-->
