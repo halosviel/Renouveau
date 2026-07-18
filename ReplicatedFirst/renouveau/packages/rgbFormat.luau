@@ -6,7 +6,7 @@
 	[DESCRIPTION]
 	A handy tool that converts a Color3 into a string, to be used in rich text markups.
 	
-	[EXAMPLE]
+	[USAGE]
 	local myColor = toRGB(Color3.fromRGB(255, 255, 255))
 	textLabel.Text = `<font color="{myColor}">Hello world!</font>`
 ]=]
