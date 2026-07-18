@@ -27,7 +27,7 @@ return function(part: Part, lookVector: Vector3, force: number, lift: number?)
 	
 	expect("Vector3", lookVector)
 	expect("number", force)
-
+	
 	local velocity: Vector3 = lookVector * force
 	if lift ~= nil then
 		expect("number", lift)

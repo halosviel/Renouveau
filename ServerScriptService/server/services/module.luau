@@ -19,7 +19,9 @@ return {
 	libs = {},
 	
 	constructor = function(self: self)
-		applyKnockback(workspace.Rig.HumanoidRootPart)
+		task.delay(2, function()
+			applyKnockback(workspace.Rig.HumanoidRootPart, Vector3.new(50, 0, 50), 0.5, 10)
+		end)
 	end,
 	
 	ready = function(self: self)
