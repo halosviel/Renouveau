@@ -7,7 +7,7 @@
 	A module with helpful tween utils.
 	Mainly used for getting the same TweenInfo, but with a different time value.
 	
-	[EXAMPLES]
+	[USAGE]
 	(1) tweenUtils.getPreset(0.5)
 	(2) tweenService:Create(someTextLabel, tweenUtils.getPreset(1), { TextColor = Color3.fromRGB(255, 255, 255) }):Play()'
 	(3)
