@@ -251,7 +251,6 @@ function SoundUtils:setRandomPitchRange(min: number, max: number) : self
 	self.instance.PlaybackSpeed += math.random(-min * 100, max * 100) / 100
 	return self
 end
-
 --[[
 	Adds the sound to the Debris service with the lifetime being the value given.
 ]]
