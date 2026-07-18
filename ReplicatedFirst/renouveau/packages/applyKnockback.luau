@@ -21,7 +21,7 @@ local expect = require("@game/ReplicatedFirst/renouveau/sys/expect")
 return function(part: Part, lookVector: Vector3, force: number, lift: number?)
 	--# dont assert targetCharacter -> anything can happen at runtime!
 	if typeof(part) ~= "Instance" or typeof(part) == "Instance" and not part:IsA("BasePart") then
-		log(4, "Type mismatch", "Applying knockback", {{ "expected", "BasePart" }, { "got", typeof(part) }})
+		log(4, "Runtime type mismatch. Doing nothing...", _, {{ "expected", "BasePart" }, { "got", typeof(part) }})
 		return
 	end
 	

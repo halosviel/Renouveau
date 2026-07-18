@@ -19,7 +19,7 @@ return {
 	libs = {},
 	
 	constructor = function(self: self)
-		
+		applyKnockback(workspace.Rig.HumanoidRootPart)
 	end,
 	
 	ready = function(self: self)
