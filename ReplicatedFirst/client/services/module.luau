@@ -17,7 +17,7 @@ return {
 	libs = {},
 	
 	constructor = function(self: self)
-		
+		self.packages.soundUtils.wrap("nyaaaa")
 	end,
 	
 	ready = function(self: self)

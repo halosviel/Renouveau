@@ -34,12 +34,12 @@ local maid = require("@game/ReplicatedFirst/renouveau/libs/maid")
 
 -- [TYPES]
 type self = {
-	--# non-class
+	--# SoundService functions
 	
 	getSound: ( self: self ) -> Sound,
 	playSound: ( self: self ) -> nil,
 	
-	--# class
+	--# Class functions
 	
 	instance: Sound,
 	onDestroyCallbacks: { () -> nil },
@@ -66,7 +66,7 @@ export type Sound = self
 
 -->
 
---# Cache & preload
+--## Cache & Preload ##--
 
 if game:GetService("RunService"):IsClient() then
 	if not game:IsLoaded() then
@@ -118,20 +118,19 @@ task.spawn(function()
 	end)
 end)
 
--->
 
---# SoundService functions
+--## SoundService functions ##--
 
 local SoundUtils = {} :: self
 
 --[[
-	Get a sound in SoundService.
+	Returns a sound from the sound cache.
 ]]
 function SoundUtils.getSound(soundName: string) : Sound
 	expect("string", soundName)
 	
 	local index: Sound? = soundCache[soundName]
-	if not index then
+	if index == nil then
 		log(3, "Sound does not exist. Typo or setup error expected", "Called `.getSound()`", {{ "sound", soundName }})
 		return
 	end
@@ -140,37 +139,44 @@ function SoundUtils.getSound(soundName: string) : Sound
 end
 
 --[[
-	Play a sound from SoundService.
+	Play a sound from the sound cache.
+	Note: Directly plays the sound in SoundService.
 ]]
 function SoundUtils.playSound(soundName: string)
+	expect("string", soundName)
 	SoundUtils.getSound(soundName):Play()
 end
 
--->
 
---# Class functions
+--## Class functions ##--
 
 --[[
 	Takes a sound name or a sound instance and turns it into a class.
 	If a string is passed, it will index the soundCache to find the sound.
-	If a Sound instance is passed, it will use it directly.
+	If a Sound instance is passed, it will use that instance directly.
 ]]
 function SoundUtils.wrap(query: string | Instance) : self
 	expect("string|Sound", query)
 	
-	local self = setmetatable({
-		instance = typeof(query) == "Instance" and query or SoundUtils.getSound(query),
+	local soundInstance: Sound = typeof(query) == "Instance" and query or SoundUtils.getSound(query)
+	local self: self = setmetatable({
+		instance = soundInstance,
 		onDestroyCallbacks = {},
 		maid = maid.new()
 	}, SoundUtils :: self)
-
-	local sound: Sound = self.instance
-	self.maid:GiveTask(sound.AncestryChanged:Connect(function(_: Instance, parent: Instance)
+	
+	self.maid:GiveTask(self.instance.AncestryChanged:Connect(function(_: Instance, parent: Instance)
 		if parent == nil then
+			log(4, "Destroyed Sound instance attached to class during lifecycle. Instance may not be GC'd", "`AncestryChanged` event fired",
+				{{ "instanceName", self.instance.name }}
+			)
 			self:Destroy()
 		end
 	end))
-	self.maid:GiveTask(sound.Destroying:Connect(function()
+	self.maid:GiveTask(self.instance.Destroying:Connect(function()
+		log(4, "Destroyed Sound instance attached to class during lifecycle. Instance may not be GC'd", "`Destroyed` event fired",
+			{{ "instanceName", self.instance.name }}
+		)
 		self:Destroy()
 	end))
 	
