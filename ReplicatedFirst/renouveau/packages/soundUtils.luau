@@ -28,7 +28,7 @@
 	  while the object exists, it is recommended to use :onDestroy() to set the
 	  variable to nil from the outside. Example:
 	  ```
-	  local sound = soundUtils.wrap(part.MySound)
+	  local sound: soundUtils.SoundObject = soundUtils.wrap(part.MySound)
 	  sound:onDestroy(function()
 	  	sound = nil
 	  end)
@@ -54,6 +54,7 @@ type self = {
 	--# Class functions
 	
 	instance: Sound,
+	originalPlaybackSpeed: number,
 	onDestroyCallbacks: { () -> nil },
 	maid: maid.Maid,
 	
@@ -74,7 +75,7 @@ type self = {
 	
 	Destroy: ( self: self ) -> nil
 }
-export type Sound = self
+export type SoundObject = self
 
 -->
 
@@ -173,6 +174,7 @@ function SoundUtils.wrap(query: string | Instance) : self
 	local soundInstance: Sound = typeof(query) == "Instance" and query or SoundUtils.getSound(query)
 	local self: self = setmetatable({
 		instance = soundInstance,
+		originalPlaybackSpeed = soundInstance.PlaybackSpeed,
 		onDestroyCallbacks = {},
 		maid = maid.new()
 	}, SoundUtils :: self)
@@ -264,30 +266,43 @@ function SoundUtils:autoDestroy() : self
 end
 
 --[[
-	Assigns a random PlaybackSpeed from the range constructed from the value given.
+	Takes the original PlaybackSpeed of the sound instance and adds or
+	subtracts the `pitch` from it.
+	
+	[NOTES]
+	- Can be called multiple times.
+	- Does not change pitch after every loop - it stays the same!
 ]]
-function SoundUtils:setRandomPitch(value: number) : self
-	expect("number", value)
-	self.instance.PlaybackSpeed += math.random(-value * 100, value * 100) / 100
+function SoundUtils:setRandomPitch(pitch: number) : self
+	expect("number", pitch)
+	self.instance.PlaybackSpeed = self.originalPlaybackSpeed + math.random(-pitch * 100, pitch * 100) / 100
 	return self
 end
 
 --[[
-	Assigns a random PlaybackSpeed from the range constructed from the range given.
+	Takes the original PlaybackSpeed of the sound instance and adds or
+	subtracts a pitch from it, clamped to `min` and `max`.
+	
+	Same notes as above applies.
 ]]
 function SoundUtils:setRandomPitchRange(min: number, max: number) : self
 	expect("number", min)
 	expect("number", max)
-	self.instance.PlaybackSpeed += math.random(-min * 100, max * 100) / 100
+	self.instance.PlaybackSpeed = self.originalPlaybackSpeed + math.random(-min * 100, max * 100) / 100
 	return self
 end
 
 --[[
-	Adds the sound to the Debris service with the lifetime being the value given.
+	Adds the sound instance to the Debris service with the lifetime
+	being the value given.
+	
+	UPDATE 2026 July 18: no clue what this function is even for, but
+	i made it also call self:Destroy().
 ]]
 function SoundUtils:setLifetime(value: number) : self
 	expect("number", value)
 	game.Debris:AddItem(self.instance, value)
+	self:Destroy()
 	return self
 end
 
@@ -302,9 +317,9 @@ function SoundUtils:stop() : self
 end
 
 function SoundUtils:Destroy()
-	pcall(function()
+	if self.instance then
 		self.instance:Destroy()
-	end)
+	end
 	
 	if self.maid then
 		self.maid:DoCleaning()
