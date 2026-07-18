@@ -24,6 +24,18 @@
 	[NOTES] 
 	- No sound name duplicates are allowed whatsoever.
 	- All chainable functions on an object should only be used once.
+	- If the sound instance that the object is attached to will/might be destroyed
+	  while the object exists, it is recommended to use :onDestroy() to set the
+	  variable to nil from the outside. Example:
+	  ```
+	  local sound = soundUtils.wrap(part.MySound)
+	  sound:onDestroy(function()
+	  	sound = nil
+	  end)
+	  -- somewhere else:
+	  part:Destroy() -- if onDestroy() was not set, the object would not be GC'd and
+	                 -- still remain in memory.
+	  ```
 ]=]
 
 -- [REQUIRES]
@@ -86,7 +98,7 @@ for _, sound: Sound in game.SoundService:GetDescendants() do
 	if not sound:IsA("Sound") then
 		continue
 	end
-
+	
 	soundCount += 1
 	
 	local soundName = sound.Name
@@ -173,6 +185,7 @@ function SoundUtils.wrap(query: string | Instance) : self
 			self:Destroy()
 		end
 	end))
+	
 	self.maid:GiveTask(self.instance.Destroying:Connect(function()
 		log(4, "Destroyed Sound instance attached to class during lifecycle. Instance may not be GC'd", "`Destroyed` event fired",
 			{{ "instanceName", self.instance.name }}
@@ -184,7 +197,8 @@ function SoundUtils.wrap(query: string | Instance) : self
 end
 
 --[[
-	Calls the callback, passing self.instance as a parameter.
+	Takes and calls the given callback, passing self.instance
+	(the sound instance) as its only parameter.
 ]]
 function SoundUtils:get(callback: ( sound: Sound ) -> nil) : self
 	expect("function", callback)
@@ -193,7 +207,10 @@ function SoundUtils:get(callback: ( sound: Sound ) -> nil) : self
 end
 
 --[[
-	Reassigns self.instance as its clone.
+	Reassigns self.instance as its clone, but does
+	not destroy the original!!
+	
+	Use only once, there is no prot bc im too lazy.
 ]]
 function SoundUtils:clone() : self
 	self.instance = self.instance:Clone()
@@ -215,6 +232,14 @@ end
 --[[
 	Adds a callback to be called when Destroy() is called or when the sound
 	is destroyed.
+	
+	[NOTES]
+	- The method can be called multiple times! It will add each function to
+	  an array where all functions within will be called when the object is
+	  destroyed.
+	- As the notes say, it is recommended to attach a :onDestroy() to a sound
+	  object if its sound instance is expected to be destroyed during the
+	  object's lifetime.
 ]]
 function SoundUtils:onDestroy(callback: () -> nil) : self
 	expect("function", callback)
@@ -251,6 +276,7 @@ function SoundUtils:setRandomPitchRange(min: number, max: number) : self
 	self.instance.PlaybackSpeed += math.random(-min * 100, max * 100) / 100
 	return self
 end
+
 --[[
 	Adds the sound to the Debris service with the lifetime being the value given.
 ]]
