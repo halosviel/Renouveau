@@ -18,13 +18,8 @@ return {
 	
 	constructor = function(self: self)
 		local sound: soundUtils.Sound = soundUtils.wrap("nyaaaa")
-		sound:onDestroy(function()
-			sound = nil
-			print("sound gone", sound)
-		end)
-		sound:onDestroy(function()
-			print("sound gone x2", sound)
-		end)
+		:setRandomPitch(0.3)
+		sound:play()
 	end,
 	
 	ready = function(self: self)

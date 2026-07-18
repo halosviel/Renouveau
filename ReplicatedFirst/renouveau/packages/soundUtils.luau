@@ -234,7 +234,9 @@ end
 	is destroyed.
 	
 	[NOTES]
-	- The method can be called multiple times! It will add each function to
+	- This method can be used to detect whether the sound has finished when
+	  alongside `autoDestroy()`.
+	- This method can be called multiple times! It will add each function to
 	  an array where all functions within will be called when the object is
 	  destroyed.
 	- As the notes say, it is recommended to attach a :onDestroy() to a sound
@@ -249,12 +251,15 @@ end
 
 --[[
 	If attached, the sound and object will destroy after playing once.
-	NOTE: Does not support looped audios.
+	
+	[NOTES]
+	- Does not support looped audios since `.Ended` would not fire.
+	- Does not warn if so since this looping changed dynamically.
 ]]
 function SoundUtils:autoDestroy() : self
-	self.instance.Ended:Once(function()
+	self.maid:GiveTask(self.instance.Ended:Once(function()
 		self:Destroy()
-	end)
+	end))
 	return self
 end
 
