@@ -11,7 +11,7 @@
 	- Set state from within a state.
 	- Optional exit handler.
 	
-	[EXAMPLE]
+	[USAGE]
 	local stateMachine = require(script.Parent)
 	
 	local sm = stateMachine.new("MY_STATE_MACHINE", {
