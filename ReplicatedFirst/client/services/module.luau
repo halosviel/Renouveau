@@ -7,17 +7,17 @@
 	Module template.
 ]=]
 
+local soundUtils = require("@game/ReplicatedFirst/renouveau/packages/soundUtils")
+
 local types = require("../types/services")
 type self = types.Module
 
 return {
 	runsFirst = false,
 	dependencies = {},
-	packages = { "soundUtils" },
-	libs = {},
 	
 	constructor = function(self: self)
-		self.packages.soundUtils.wrap("nyaaaa")
+		local sound: soundUtils.Sound = soundUtils.wrap("nyaaaa")
 	end,
 	
 	ready = function(self: self)

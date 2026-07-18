@@ -14,8 +14,6 @@ type self = types.SessionLogD
 return {
 	runsFirst = true,
 	dependencies = {},
-	packages = {},
-	libs = {},
 	
 	constructor = function(self: self)
 		self.JOIN_LOGS_ENABLED = true

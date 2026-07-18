@@ -33,8 +33,6 @@ local processClock = require("./processClock")
 
 type Module = {
 	dependencies: { string },
-	packages: { string },
-	libs: { string },
 	constructor: ( self: Module ) -> nil,
 	ready: ( self: Module ) -> nil
 } & any
@@ -135,8 +133,6 @@ return function(root: Folder)
 		--# validate structure
 		expect("table", module)
 		expect("table", module.dependencies)
-		expect("table", module.packages)
-		expect("table", module.libs)
 		
 		--# classes have new instead of constructor. Accept one or the other.
 		if module.new == nil then
@@ -167,17 +163,14 @@ return function(root: Folder)
 	end
 	
 	--## Add dependencies ##--
-	--# in this case, referring to all `dependencies`, `packages`,
-	--# and `libs` tables.
-	--#
 	--# This works by replacing each table with a new one, where its
 	--# required module is the value, and the old reference as its key.
 	--#
 	--# Example:
 	--#
-	--# libs = { "maid", "promise" }
+	--# dependencies = { "someModule", "anotherModule" }
 	--# to
-	--#	libs = { maid = Maid, promise = Promise } --# required modules
+	--#	dependencies = { someModule = SomeModule, anotherModule = AnotherModule } --# required modules
 	--#
 	
 	local function getDependencies(source: { Module } | Instance, names: { string })
@@ -198,14 +191,6 @@ return function(root: Folder)
 	for _, moduleData: ModuleData in allModules do
 		if #moduleData.module.dependencies > 0 then
 			moduleData.module.dependencies = getDependencies(allModules, moduleData.module.dependencies)
-		end
-		
-		if #moduleData.module.packages > 0 then
-			moduleData.module.packages = getDependencies(script.Parent.Parent.packages, moduleData.module.packages)
-		end
-		
-		if #moduleData.module.libs > 0 then
-			moduleData.module.libs = getDependencies(script.Parent.Parent.libs, moduleData.module.libs)
 		end
 	end
 	
