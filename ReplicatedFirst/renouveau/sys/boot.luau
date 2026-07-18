@@ -239,7 +239,6 @@ return function(root: Folder)
 				errorHandler("Running `ready()`", moduleData.moduleScript, err)
 			end)
 		end
-		
 	end
 	
 	if game.RunService:IsClient() then
