@@ -7,7 +7,7 @@
 	Wrapper for enabling/disabling character controls (most optimal way
 	of toggling character movement).
 	
-	[EXAMPLES]
+	[USAGE]
 	(1) controls.enable()
 	(2) controls.disable()
 	

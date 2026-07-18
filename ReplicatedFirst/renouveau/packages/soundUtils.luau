@@ -30,31 +30,32 @@ local maid = require("@game/ReplicatedFirst/renouveau/libs/maid")
 
 -- [TYPES]
 type self = {
-
+	--# non-class
+	
 	getSound: ( self: self ) -> Sound,
 	playSound: ( self: self ) -> nil,
-
-	-->
-
+	
+	--# class
+	
 	instance: Sound,
 	onDestroyCallbacks: { () -> nil },
 	maid: maid.Maid,
-
+	
 	wrap: ( query: string | Instance ) -> self,
 	get: ( self: self, ( sound: Sound ) -> nil ) -> self,
 	clone: ( self: self ) -> self,
 	setParent: ( self: self, parent: BasePart ) -> self,
 	setVolume: ( self: self, volume: number ) -> self,
 	onDestroy: ( self: self, callback: () -> nil ) -> self,
-
+	
 	setRandomPitch: ( self: self, value: number ) -> self,
 	setRandomPitchRange: ( self: self, min: number, max: number ) -> self,
 	setLifetime: ( self: self, value: number ) -> self,
 	autoDestroy: ( self: self ) -> self,
-
+	
 	play: ( self: self ) -> self,
 	stop: ( self: self ) -> self,
-
+	
 	Destroy: ( self: self ) -> nil
 }
 export type Sound = self

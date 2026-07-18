@@ -7,7 +7,7 @@
 	Module template.
 ]=]
 
-local coreGui = require("@game/ReplicatedFirst/renouveau/packages/coreGui")
+local soundUtils = require("@game/ReplicatedFirst/renouveau/packages/soundUtils")
 
 local types = require("../types/services")
 type self = types.Module
@@ -19,9 +19,7 @@ return {
 	libs = {},
 	
 	constructor = function(self: self)
-		coreGui:setChatEnabled(false)
-		task.wait(3)
-		coreGui:setAllEnabled(false)
+		
 	end,
 	
 	ready = function(self: self)
