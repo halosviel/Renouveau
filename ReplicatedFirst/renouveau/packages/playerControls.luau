@@ -17,7 +17,7 @@
 ]=]
 
 -- [TYPES]
-type Controls = { --# made by clanker
+type Controls = {
 	inputMoveVector: Vector3,
 	
 	GetMoveVector: ( self: Controls ) -> Vector3,

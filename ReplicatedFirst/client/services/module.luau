@@ -7,7 +7,7 @@
 	Module template.
 ]=]
 
-local applyKnockback = require("@game/ReplicatedFirst/renouveau/packages/applyKnockback")
+local controls = require("@game/ReplicatedFirst/renouveau/packages/controls")
 
 local types = require("../types/services")
 type self = types.Module
@@ -19,9 +19,7 @@ return {
 	libs = {},
 	
 	constructor = function(self: self)
-		task.delay(2, function()
-			applyKnockback(workspace.Rig.HumanoidRootPart, Vector3.new(50, 0, 50), 0.5, 10)
-		end)
+		controls.disable()
 	end,
 	
 	ready = function(self: self)
