@@ -11,10 +11,14 @@
 	when needed.
 	
 	[USAGE]
-	SoundUtils.wrap("SomeSound")
+	(1) soundUtils.getSound("SomeSound")
+	(2) soundUtils.playSound("SomeSound")
+	(3)
+	soundUtils.wrap("SomeSound")
 		:clone()
 		:autoDestroy()
 		:setParent(workspace.static.Spawn)
+		:setRandomPitch(0.2)
 		:play()
 	
 	[NOTES] 
