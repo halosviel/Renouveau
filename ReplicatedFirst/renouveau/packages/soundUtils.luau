@@ -104,7 +104,7 @@ local conflictSuffix: string = #conflicts == 1 and "" or "s"
 
 local soundCountSuffix: string = soundCount == 1 and "" or "s"
 local cacheDuration: number = math.floor(cacheTotalDuration * 100) / 100
-print(`Cached {soundCount} sound{soundCountSuffix} in {cacheDuration}s ({#conflicts} conflict{conflictSuffix})`)
+--print(`Cached {soundCount} sound{soundCountSuffix} in {cacheDuration}s ({#conflicts} conflict{conflictSuffix})`)
 
 if #conflicts > 0 then
 	log(2, `{tostring(#conflicts)} naming conflict{conflictSuffix} found`, "Caching sounds", {{ "conflicts", table.concat(conflicts, ", ") }})
@@ -112,7 +112,7 @@ end
 
 task.spawn(function()
 	xpcall(function()
-		game:GetService("ContentProvider"):PreloadAsync(sounds)
+		game.ContentProvider:PreloadAsync(sounds)
 	end, function(err: string)
 		log(4, "Sound preloading failed", "Post-cache sound preloading", {{ "err", err }})
 	end)
