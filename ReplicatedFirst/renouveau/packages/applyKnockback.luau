@@ -6,7 +6,7 @@
 	[DESCRIPTION]
 	Applies knockback and lift to the part in the direction of lookVector.
 	
-	[EXAMPLES]
+	[USAGE]
 	applyKnockback(part, Vector3.new(0, 0, 1), 25, 5)
 	
 	[UPDATES]

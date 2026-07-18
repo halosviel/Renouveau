@@ -7,6 +7,8 @@
 	Module template.
 ]=]
 
+local applyKnockback = require("@game/ReplicatedFirst/renouveau/packages/applyKnockback")
+
 local types = require("../types/services")
 type self = types.Module
 
