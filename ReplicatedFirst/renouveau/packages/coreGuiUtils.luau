@@ -6,7 +6,7 @@
 	[DESCRIPTION]
 	Wrapper for enabling/disabling CoreGui features.
 	
-	[EXAMPLES]
+	[USAGE]
 	(1) coreGui:setResetEnabled(true)
 	(2) coreGui:setLeaderboardEnabled(true)
 	(3) coreGui:setChatEnabled(false)
