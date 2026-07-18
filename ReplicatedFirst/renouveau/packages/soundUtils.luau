@@ -99,12 +99,15 @@ for _, sound: Sound in game.SoundService:GetDescendants() do
 	soundCache[soundName] = sound
 end
 
-local cacheTotalDuration = os.clock() - cacheStartTimestamp
+local cacheTotalDuration: number = os.clock() - cacheStartTimestamp
 local conflictSuffix: string = #conflicts == 1 and "" or "s"
---print(`Cached {soundCount} sounds in {cacheTotalDuration}s ({#conflicts} conflict{conflictSuffix})`)
+
+local soundCountSuffix: string = soundCount == 1 and "" or "s"
+local cacheDuration: number = math.floor(cacheTotalDuration * 100) / 100
+print(`Cached {soundCount} sound{soundCountSuffix} in {cacheDuration}s ({#conflicts} conflict{conflictSuffix})`)
 
 if #conflicts > 0 then
-	log(2, `{tostring(#conflicts)} naming conflict{conflictSuffix} found`, "Caching sounds" ,`conflicts: {table.concat(conflicts, ", ")}`)
+	log(2, `{tostring(#conflicts)} naming conflict{conflictSuffix} found`, "Caching sounds", {{ "conflicts", table.concat(conflicts, ", ") }})
 end
 
 task.spawn(function()
