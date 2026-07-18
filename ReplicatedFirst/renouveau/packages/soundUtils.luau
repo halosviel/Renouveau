@@ -10,7 +10,7 @@
 	Works by caching all Sounds in SoundService on runtime, then indexing them
 	when needed.
 	
-	[EXAMPLE]
+	[USAGE]
 	SoundUtils.wrap("SomeSound")
 		:clone()
 		:autoDestroy()
