@@ -7,7 +7,7 @@
 	Module template.
 ]=]
 
-local controls = require("@game/ReplicatedFirst/renouveau/packages/controls")
+local coreGui = require("@game/ReplicatedFirst/renouveau/packages/coreGui")
 
 local types = require("../types/services")
 type self = types.Module
@@ -19,7 +19,9 @@ return {
 	libs = {},
 	
 	constructor = function(self: self)
-		controls.disable()
+		coreGui:setChatEnabled(false)
+		task.wait(3)
+		coreGui:setAllEnabled(false)
 	end,
 	
 	ready = function(self: self)

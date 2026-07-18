@@ -52,7 +52,6 @@ return {
 	
 	setAllEnabled = function(self: self, enabled: boolean)
 		expect("boolean", enabled)
-		
 		self:setResetEnabled(enabled)
 		self:setLeaderboardEnabled(enabled)
 		self:setChatEnabled(enabled)
